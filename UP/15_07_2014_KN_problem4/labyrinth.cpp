@@ -1,5 +1,6 @@
 #include <iostream>
 #include <utility>
+#include <cstring>
 
 // Idea for solution: Start from the bottom right corner and move backwards by
 // reversing the path. If the path contains 'N' (north), the backwards move is
@@ -83,10 +84,11 @@ bool makeReverseMove(char direction, Point& currentPoint, int** labyrinth,
 }
 
 // path -> contains 'E', 'W', 'N', 'S'
-bool walk(int** labyrinth, int labyrinthSize, const char* path, int pathSize) {
+bool walk(int** labyrinth, int labyrinthSize, const char* path) {
   const Point bottomRight{labyrinthSize - 1, labyrinthSize - 1};
 
   Point currentPoint = bottomRight;
+  const int pathSize = std::strlen(path);
   for (int i = pathSize - 1; i >= 0; i--) {
     char direction = path[i];
     if (!makeReverseMove(direction, currentPoint, labyrinth, labyrinthSize)) {
@@ -108,19 +110,19 @@ int** testLabyrinth1 = new int*[3]{
 int main() {
   try {
     std::cout << "Is there path SSEE to bottom right in testLabyrinth1? : "
-              << (walk(testLabyrinth1, 3, "SSEE", 4) ? "YES\n" : "NO\n");
+              << (walk(testLabyrinth1, 3, "SSEE") ? "YES\n" : "NO\n");
 
     std::cout << "Is there path SSEES to bottom right in testLabyrinth1? : "
-              << (walk(testLabyrinth1, 3, "SSEES", 5) ? "YES\n" : "NO\n");
+              << (walk(testLabyrinth1, 3, "SSEES") ? "YES\n" : "NO\n");
 
     std::cout << "Is there path S to bottom right in testLabyrinth1? : "
-              << (walk(testLabyrinth1, 3, "S", 1) ? "YES\n" : "NO\n");
+              << (walk(testLabyrinth1, 3, "S") ? "YES\n" : "NO\n");
 
     std::cout << "Is there path SS to bottom right in testLabyrinth1? : "
-              << (walk(testLabyrinth1, 3, "SS", 2) ? "YES\n" : "NO\n");
+              << (walk(testLabyrinth1, 3, "SS") ? "YES\n" : "NO\n");
 
     std::cout << "Is there path EE to bottom right in testLabyrinth1? : "
-              << (walk(testLabyrinth1, 3, "EE", 2) ? "YES\n" : "NO\n");
+              << (walk(testLabyrinth1, 3, "EE") ? "YES\n" : "NO\n");
   } catch (const char* exc) {
     std::cout << "Exception: " << exc << std::endl;
   } catch (...) {
