@@ -58,7 +58,6 @@ Node* generateTree(std::ifstream& ifs, Node* current) {
   ifs >> c;
 
   while (c != ')' && ifs) {
-    std::cout << "Read: " << c << std::endl;
     auto child = generateTree(ifs, current);
     if (child) {
       current->children.push_back(child);
@@ -79,8 +78,36 @@ void print(Node* root) {
   }
 }
 
+void maxSumRec(Node* node, int& currentMax, int currentSum);
+
+int maxSum(Node* root) {
+  if (!root) {
+    throw std::runtime_error{"Invalid tree"};
+  }
+
+  int max = -99999;
+  maxSumRec(root, max, 0);
+  return max;
+}
+
+void maxSumRec(Node* node, int& currentMax, int currentSum) {
+  currentSum += node->data;
+  if (node->isLeaf()) {
+    if (currentSum > currentMax) {
+      currentMax = currentSum;
+    }
+  } else {  // not a leaf
+    for (auto child : node->children) {
+      maxSumRec(child, currentMax, currentSum);
+    }
+  }
+}
+
 int main() {
   Node* root1 = readTreeFromFile("test_tree1");
   Node* root2 = readTreeFromFile("test_tree2");
-  print(root1);
+  //   print(root1);
+  //   print(root2);
+  std::cout << maxSum(root1) << '\n';
+  std::cout << maxSum(root2) << '\n';
 }
