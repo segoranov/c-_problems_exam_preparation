@@ -1,4 +1,5 @@
 #include <fstream>
+#include <functional>
 #include <iostream>
 #include <stdexcept>
 #include <string>
@@ -103,6 +104,31 @@ void maxSumRec(Node* node, int& currentMax, int currentSum) {
   }
 }
 
+int maxSum_lambda(Node* root) {
+  if (!root) {
+    throw std::runtime_error{"Invalid tree"};
+  }
+
+  int max = -99999;
+  std::function<void(Node*, int)> maxSumRec_lambda;
+  maxSumRec_lambda = [&](Node* node, int currentSum) {
+    currentSum += node->data;
+    if (node->isLeaf()) {
+      if (currentSum > max) {
+        max = currentSum;
+      }
+    } else {  // not a leaf
+      for (auto child : node->children) {
+        maxSumRec_lambda(child, currentSum);
+      }
+    }
+  };
+
+  maxSumRec_lambda(root, 0);
+
+  return max;
+}
+
 int main() {
   Node* root1 = readTreeFromFile("test_tree1");
   Node* root2 = readTreeFromFile("test_tree2");
@@ -110,4 +136,6 @@ int main() {
   //   print(root2);
   std::cout << maxSum(root1) << '\n';
   std::cout << maxSum(root2) << '\n';
+  std::cout << maxSum_lambda(root1) << '\n';
+  std::cout << maxSum_lambda(root2) << '\n';
 }
