@@ -6,25 +6,11 @@ struct Node {
   Node* next = nullptr;
 };
 
-int size(Node* first) {
-  if (!first) return 0;
-
-  Node* it = first;
-  int result = 0;
-  while (it) {
-    ++result;
-    it = it->next;
-  }
-  return result;
-}
-
 void sortList(Node* first) {
-  const int listSize = size(first);
-
-  if (listSize == 0 || listSize == 1) return;
+  // do nothing if there are only 0 or 1 elements
+  if (!first || !first->next) return;
 
   // selection sort
-
   Node* i = first;
   while (i) {
     Node* min = i;
