@@ -11,8 +11,6 @@ struct Node {
   std::vector<Node*> children;
 };
 
-bool isEmptyTree(Node* node) { return node->c == '!'; }
-
 std::string readLast(Node* root) {
   if (!root) return "";
 
@@ -38,7 +36,7 @@ std::string readLast(Node* root) {
     } else {
       word += cur->c;
       for (auto child : cur->children) {
-        if (!isEmptyTree(child)) q.push(child);
+        if (child != nullptr) q.push(child);
       }
     }
   }
@@ -61,7 +59,7 @@ void serialize(Node* root, const std::string& file) {
 }
 
 void serialize_rec(Node* cur, std::string& str) {
-  if (isEmptyTree(cur)) {
+  if (!cur) {
     str += "*";
   } else {
     str += "(";
@@ -82,54 +80,31 @@ int main() {
   // level 1
   Node* x = new Node('x');
   Node* y = new Node('y');
-  Node* e1 = new Node('!');  // empty tree
 
   // level 2
   Node* p = new Node('p');
   Node* q = new Node('q');
   Node* r = new Node('r');
-  Node* e2 = new Node('!');  // empty tree
-  Node* e3 = new Node('!');  // empty tree
   Node* s = new Node('s');
 
   // level 3
-  Node* e4 = new Node('!');  // empty tree
-  Node* e5 = new Node('!');  // empty tree
-  Node* e6 = new Node('!');  // empty tree
-  Node* e7 = new Node('!');  // empty tree
-  Node* e8 = new Node('!');  // empty tree
-  Node* e9 = new Node('!');  // empty tree
   Node* c = new Node('c');
-  Node* e10 = new Node('!');  // empty tree
   Node* a = new Node('a');
-  Node* e11 = new Node('!');  // empty tree
   Node* t = new Node('t');
-  Node* e12 = new Node('!');  // empty tree
 
-  // level 4
-  Node* e13 = new Node{'!'};  // empty tree
-  Node* e14 = new Node{'!'};  // empty tree
-  Node* e15 = new Node{'!'};  // empty tree
-  Node* e16 = new Node{'!'};  // empty tree
-  Node* e17 = new Node{'!'};  // empty tree
-  Node* e18 = new Node{'!'};  // empty tree
-  Node* e19 = new Node{'!'};  // empty tree
-  Node* e20 = new Node{'!'};  // empty tree
-  Node* e21 = new Node{'!'};  // empty tree
-
-  b->children = {x, y, e1};
+  b->children = {x, y, nullptr};
 
   x->children = {p, q, r};
-  y->children = {e2, e3, s};
+  y->children = {nullptr, nullptr, s};
 
-  p->children = {e4, e5, e6};
-  q->children = {e7, e8, e9};
-  r->children = {c, e10, a};
-  s->children = {e11, t, e2};
+  p->children = {nullptr, nullptr, nullptr};
+  q->children = {nullptr, nullptr, nullptr};
+  r->children = {c, nullptr, a};
+  s->children = {nullptr, t, nullptr};
 
-  c->children = {e13, e14, e15};
-  a->children = {e16, e17, e18};
-  t->children = {e19, e20, e21};
+  c->children = {nullptr, nullptr, nullptr};
+  a->children = {nullptr, nullptr, nullptr};
+  t->children = {nullptr, nullptr, nullptr};
 
   auto lastLevelWord = readLast(b);
   std::cout << "Last level word: " << lastLevelWord << '\n';
