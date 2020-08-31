@@ -2,10 +2,6 @@
 #include <stack>
 #include <string>
 
-int fromChar(char c) { return c - 48; }
-
-char fromInt(int i) { return i + 48; }
-
 int compareLex(unsigned int lhs, unsigned int rhs) {
   std::stack<int> s1, s2;
 
@@ -19,24 +15,27 @@ int compareLex(unsigned int lhs, unsigned int rhs) {
     rhs /= 10;
   }
 
-  std::string str1, str2;
-
-  while (!s1.empty()) {
-    str1 += fromInt(s1.top());
-    s1.pop();
+  while (!s1.empty() && !s2.empty()) {
+    if (s1.top() < s2.top()) {
+      return -1;
+    } else if (s1.top() > s2.top()) {
+      return 1;
+    } else {  // equal
+      s1.pop();
+      s2.pop();
+    }
   }
 
-  while (!s2.empty()) {
-    str2 += fromInt(s2.top());
-    s2.pop();
-  }
-
-  if (str1 == str2)
-    return 0;
-  else if (str1 > str2)
-    return 1;
-  else
+  if (!s2.empty()) {
+    // '123' (s1) < '1234' (s2)
     return -1;
+  }
+
+  if (!s1.empty()) {
+    return 1;
+  }
+
+  return 0;
 }
 
 void swap(unsigned int& a, unsigned int& b) {
