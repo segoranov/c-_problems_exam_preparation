@@ -88,13 +88,13 @@ void swap(unsigned int& a, unsigned int& b) {
 
 void sortLex(unsigned int arr[], int n) {
   for (int i = 0; i < n - 1; i++) {
-    int max = i;
+    int min = i;
     for (int j = i + 1; j < n; j++) {
-      if (compareLex1(arr[max], arr[j]) == 1) {  // i.e. arr[j] > arr[max]
-        max = j;
+      if (compareLex1(arr[min], arr[j]) == 1) {  // i.e. arr[j] < arr[min]
+        min = j;
       }
     }
-    swap(arr[max], arr[i]);
+    swap(arr[min], arr[i]);
   }
 }
 
