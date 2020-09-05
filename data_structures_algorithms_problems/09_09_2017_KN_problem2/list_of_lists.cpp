@@ -24,6 +24,49 @@ void addElem(Node<T>*& list, const T& newElem) {
   it->next->next = nullptr;
 }
 
+// Add add elements from l2 to l1
+template <typename T>
+void addAll(Node<T>*& l1, Node<T>* l2) {
+  if (!l2) return;
+
+  auto l2_it = l2;
+  while (l2_it) {
+    addElem(l1, l2_it->data);
+    l2_it = l2_it->next;
+  }
+}
+
+// Merge two sorted lists into one newly created
+template <typename T>
+Node<T>* merge(Node<T>* l1, Node<T>* l2) {
+  Node<T>* result = nullptr;
+
+  if (!l1) {
+    addAll(result, l2);
+    return result;
+  }
+  if (!l2) {
+    addAll(result, l1);
+    return result;
+  }
+
+  while (l1 && l2) {
+    if (l1->data <= l2->data) {
+      addElem(result, l1->data);
+      l1 = l1->next;
+    } else {
+      addElem(result, l2->data);
+      l2 = l2->next;
+    }
+  }
+
+  // Add remaning elements if any
+  addAll(result, l1);
+  addAll(result, l2);
+
+  return result;
+}
+
 template <typename T>
 bool isSorted(Node<T>* list) {
   if (!list || !list->next) return true;
@@ -40,26 +83,16 @@ bool isSorted(Node<T>* list) {
   return true;
 }
 
-// Add add elements from l2 to l1
-template <typename T>
-void addAll(Node<T>*& l1, Node<T>* l2) {
-  if (!l2) return;
-
-  auto l2_it = l2;
-  while (l2_it) {
-    addElem(l1, l2_it->data);
-    l2_it = l2_it->next;
-  }
-}
-
-// Merg all sorted lists into one resulting in a newly created sorted list.
+// Merge all sorted lists into one resulting in a newly created sorted list.
 Node<int>* mergeSorted(Node<Node<int>*>* lists) {
   Node<int>* result = nullptr;
 
   while (lists) {
     auto currentList = lists->data;
     if (isSorted(currentList)) {
-      addAll(result, currentList);
+      auto tempResult = result;
+      result = merge(result, currentList);
+      delete tempResult; // avoid memory leaks
     }
     lists = lists->next;
   }
@@ -88,8 +121,8 @@ void print(Node<Node<int>*>* lists) {
 int main() {
   Node<int>* l1 = nullptr;  // sorted
   addElem(l1, 1);
-  addElem(l1, 2);
-  addElem(l1, 3);
+  addElem(l1, 8);
+  addElem(l1, 11);
 
   Node<int>* l2 = nullptr;  // not sorted
   addElem(l2, 4);
@@ -97,16 +130,22 @@ int main() {
   addElem(l2, 5);
 
   Node<int>* l3 = nullptr;  // sorted
-  addElem(l3, 7);
-  addElem(l3, 8);
-  addElem(l3, 9);
+  addElem(l3, 3);
+  addElem(l3, 4);
+  addElem(l3, 18);
+
+  Node<int>* l4 = nullptr;  // sorted
+  addElem(l4, 5);
+  addElem(l4, 20);
+  addElem(l4, 25);
 
   Node<Node<int>*>* lists = nullptr;
   addElem(lists, l1);
   addElem(lists, l2);
   addElem(lists, l3);
+  addElem(lists, l4);
 
   print(lists);
   std::cout << "After merging sorted: ";
-  print(mergeSorted(lists));  // should print [ 1 2 3 7 8 9 ]
+  print(mergeSorted(lists));  // should print [ 1 3 4 5 8 11 18 20 25 ]
 }
