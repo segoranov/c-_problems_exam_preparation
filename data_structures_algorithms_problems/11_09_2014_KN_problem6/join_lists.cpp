@@ -1,5 +1,6 @@
 #include <iostream>
 #include <map>
+#include <unordered_set>
 #include <utility>
 
 struct Node {
@@ -112,6 +113,59 @@ bool join(Node*& L1, Node*& L2) {
   return true;
 }
 
+bool isJoined(Node* first /*, Node* last TODO SG: do we even need last??*/) {
+  if (!first) {
+    return false;
+  }
+
+  std::unordered_set<Node*> visited;
+
+  auto it = first;
+  while (it != nullptr && !visited.contains(it)) {
+    visited.insert(it);
+    if (it->prev && !visited.contains(it->prev)) {
+      // reached an element from the other list
+      return true;
+    }
+    it = it->next;
+  }
+
+  if (it != nullptr) {
+    // we have made a cycle and returned to visited element, hence
+    // the list is 'joined'
+    return true;
+  }
+
+  return false;  // it == nullptr, reached the end of list
+}
+
+int sumJoined(Node* list) {
+  if (!list) {
+    return 0;
+  }
+
+  int sum = 0;
+
+  std::unordered_set<Node*> visited;
+
+  while (list) {
+    sum += list->data;
+    visited.insert(list);
+    if (list->prev && !visited.contains(list->prev)) {
+      // calcuate 'joined' part
+      auto itPrev = list->prev;
+      while (!visited.contains(itPrev)) {
+        sum += itPrev->data;
+        itPrev = itPrev->prev;
+      }
+    }
+
+    list = list->next;
+  }
+
+  return sum;
+}
+
 int main() {
   Node* L1 = nullptr;
   addElemAtEnd(L1, 1);
@@ -134,7 +188,16 @@ int main() {
   std::cout << "L2: ";
   printList(L2);
 
+  std::cout << "L1 is joined?: " << std::boolalpha << isJoined(L1) << '\n';
+  std::cout << "L2 is joined?: " << std::boolalpha << isJoined(L1) << '\n';
+
   if (!join(L1, L2)) {
     std::cout << "Failed to join lists.\n";
   }
+
+  std::cout << "L1 is joined?: " << std::boolalpha << isJoined(L1) << '\n';
+
+  std::cout << "Sum of L1 (joined list!): " << sumJoined(L1);
+  std::cout << "\nExpected sum: " << (1 + 3 + 5 + 7 + 9 + 6 + 5 + 8 + 4 + 3 + 7)
+            << std::endl;
 }
