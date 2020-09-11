@@ -1,4 +1,5 @@
 #include <iostream>
+#include <queue>
 #include <unordered_map>
 #include <unordered_set>
 
@@ -32,29 +33,55 @@ class Graph {
     // inefficiency :-)
     for (const auto& v1 : getVertices()) {
       for (const auto& v2 : getVertices()) {
-        if (!hasPath(v1, v2) && !hasPath(v2, v1)) return false;
+        // if (!hasPathDFS(v1, v2) && !hasPathDFS(v2, v1)) return false;
+        if (!hasPathBFS(v1, v2) && !hasPathBFS(v2, v1)) return false;
       }
     }
     return true;
   }
 
-  bool hasPath(int from, int to) {
+  bool hasPathBFS(int from, int to) {
     if (!containsVertice(from) || !containsVertice(to))
       throw "Non existent vertice.";
 
     if (from == to) return true;
 
     std::unordered_set<int> visited;
-    return hasPath_rec(from, to, visited);
+    std::queue<int> q;
+    q.push(from);
+
+    while (!q.empty()) {
+      int cur = q.front();
+      if (cur == to) return true;
+      visited.insert(cur);
+      q.pop();
+      for (int neighbor : getNeighbors(cur)) {
+        if (!visited.contains(neighbor)) {
+          q.push(neighbor);
+        }
+      }
+    }
+
+    return false;
+  }
+
+  bool hasPathDFS(int from, int to) {
+    if (!containsVertice(from) || !containsVertice(to))
+      throw "Non existent vertice.";
+
+    if (from == to) return true;
+
+    std::unordered_set<int> visited;
+    return hasPathDFS_rec(from, to, visited);
   }
 
  private:
-  bool hasPath_rec(int from, int to, std::unordered_set<int>& visited) {
+  bool hasPathDFS_rec(int from, int to, std::unordered_set<int>& visited) {
     visited.insert(from);
     if (from == to) return true;
 
     for (const auto& neighbor : getNeighbors(from)) {
-      if (!visited.contains(neighbor) && hasPath_rec(neighbor, to, visited))
+      if (!visited.contains(neighbor) && hasPathDFS_rec(neighbor, to, visited))
         return true;
     }
 
